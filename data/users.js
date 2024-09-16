@@ -1,4 +1,4 @@
-const users = [
+const drivers = [
     {
         id: 1,
         name: "Tran",
@@ -19,4 +19,4 @@ const users = [
     },
 ];
 
-module.exports = users
+module.exports = drivers;
