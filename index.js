@@ -13,6 +13,7 @@ app.get("/api/drivers", (req, res) => {
 app.get("/api/drivers/:id", (req, res) => {
     const driver = drivers.find((d) => d.id == req.params.id);
     if (driver) res.json(driver);
+    else next();
 });
 
 app.get("/api/vehicles", (req, res) => {
@@ -22,6 +23,7 @@ app.get("/api/vehicles", (req, res) => {
 app.get("/api/vehicles/:id", (req, res) => {
     const vehicle = vehicles.find((d) => d.id == req.params.id);
     if (vehicle) res.json(vehicle);
+    else next();
 });
 
 app.get("/api/stats", (req, res) => {
@@ -31,17 +33,14 @@ app.get("/api/stats", (req, res) => {
 app.get("/api/stats/:id", (req, res) => {
     const stat = stats.find((d) => d.id == req.params.id);
     if (stat) res.json(stat);
+    else next();
 });
 
-app.use((err, req, res, next) => {
-    res.status(404);
-    res.json({ error: "Resource Not Found"});
-});
 
 //error handler    
 app.use((err, req, res, next) => {
-    res.status(400).send('Something Broke!');
-    
+    res.status(404);
+    res.json({ error: "Resource Not Found" });
 });
 
 
