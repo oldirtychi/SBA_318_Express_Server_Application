@@ -10,4 +10,6 @@ The Objective of this project is to:
 -Interact with a self-made API through HTML forms.
 
 
+Use the form to input a new driver
 
+This Database includes information about the drivers and their vehicles.
