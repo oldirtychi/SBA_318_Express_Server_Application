@@ -2,36 +2,58 @@ const express = require("express");
 const router = express.Router();
 
 const stats = require("../data/stats");
+const error = require("../utilities/error");
 
 router
   .route("/")
   .get((req, res) => {
-    res.json(stats);
+    const links = [
+      {
+        href: "stats/:id",
+        rel: ":id",
+        type: "GET",
+      },
+    ];
+
+    res.json({ stats, links });
   })
-  .post((req, res) => {
+  .post((req, res, next) => {
     if (req.body.hp && req.body.torque) {
-      const post = {
+      const stat = {
         id: stats[stats.length - 1].id + 1,
         hp: req.body.hp,
         torque: req.body.torque,
-        
       };
 
-      stats.push(stats);
+      stats.push(stat);
       res.json(stats[stats.length - 1]);
-    } else res.json({ error: "Insufficient Data" });
+    } else next(error(400, "Insufficient Data"));
   });
 
 router
   .route("/:id")
   .get((req, res, next) => {
-    const post = stats.find((s) => s.id == req.params.id);
-    if (stats) res.json(stats);
+    const stat = stats.find((s) => s.id == req.params.id);
+
+    const links = [
+      {
+        href: `/${req.params.id}`,
+        rel: "",
+        type: "PATCH",
+      },
+      {
+        href: `/${req.params.id}`,
+        rel: "",
+        type: "DELETE",
+      },
+    ];
+
+    if (stat) res.json({ stat, links });
     else next();
   })
   .patch((req, res, next) => {
-    const post = stats.find((p, i) => {
-      if (p.id == req.params.id) {
+    const stat = stats.find((s, i) => {
+      if (s.id == req.params.id) {
         for (const key in req.body) {
           stats[i][key] = req.body[key];
         }
@@ -39,18 +61,18 @@ router
       }
     });
 
-    if (stats) res.json(stats);
+    if (stat) res.json(stat);
     else next();
   })
   .delete((req, res, next) => {
-    const post = stats.find((p, i) => {
-      if (p.id == req.params.id) {
-        stats.splice(i, 1);
+    const stat = stats.find((s, i) => {
+      if (s.id == req.params.id) {
+       stats.splice(i, 1);
         return true;
       }
     });
 
-    if (stats) res.json(stats);
+    if (stat) res.json(stat);
     else next();
   });
 

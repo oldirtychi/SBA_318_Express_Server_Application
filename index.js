@@ -9,49 +9,82 @@ const port = 3000;
 const drivers = require("./routes/drivers");
 const vehicles = require("./routes/vehicles");
 const stats = require("./routes/stats");
+// const form = require("./public/script");
 
 //parsing middleware
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json({ extended: true }));
+app.use(express.static('public')); 
+
+app.set('view engine', 'ejs');
 
 app.use("/api/drivers", drivers);
 app.use("/api/vehicles", vehicles);
-app.use("api/stats", stats);
+app.use("/api/stats", stats);
+// app.use("/api/submit", form);
 
-app.get ("/", (req, res) => {
-    res.send("If you ain't first, you're last");
+app.get('/', (req, res) => {
+  res.render('form');
 });
 
-// app.get("/api/drivers", (req, res) => {
-//     res.json(drivers);
-// });
+app.get("/", (req, res) => {
+    res.json({
+      links: [
+        {
+          href: "/api",
+          rel: "api",
+          type: "GET",
+        },
+      ],
+    });
+  });
+  
 
-// app.get("/api/drivers/:id", (req, res) => {
-//     const driver = drivers.find((d) => d.id == req.params.id);
-//     if (driver) res.json(driver);
-//     else next();
-// });
+  app.get("/api", (req, res) => {
+    res.json({
+      links: [
+        {
+          href: "api/drivers",
+          rel: "drivers",
+          type: "GET",
+        },
+        {
+          href: "api/drivers",
+          rel: "drivers",
+          type: "POST",
+        },
+        {
+          href: "api/stats",
+          rel: "stats",
+          type: "GET",
+        },
+        {
+          href: "api/stats",
+          rel: "stats",
+          type: "POST",
+        },
+        {
+            href: "api/vehicles",
+            rel: "vehicles",
+            type: "GET",
+          },
+          {
+            href: "api/vehicles",
+            rel: "vehicles",
+            type: "POST",
+          },
+      ],
+    });
+  });
+  
 
-// app.get("/api/vehicles", (req, res) => {
-//     res.json(vehicles);
-// });
 
-// app.get("/api/vehicles/:id", (req, res) => {
-//     const vehicle = vehicles.find((d) => d.id == req.params.id);
-//     if (vehicle) res.json(vehicle);
-//     else next();
-// });
 
-// app.get("/api/stats", (req, res) => {
-//     res.json(stats);
-// });
-
-// app.get("/api/stats/:id", (req, res) => {
-//     const stat = stats.find((d) => d.id == req.params.id);
-//     if (stat) res.json(stat);
-//     else next();
-// });
-
+app.post('/api/submit', (req, res) => {
+  const { name, username, email } = req.body;
+  console.log(`Received data: Name - ${name}, Username - ${username} Email - ${email}`);
+  res.json({ message: 'Data received successfully' });
+});
 
 //error handler    
 app.use((err, req, res, next) => {
@@ -63,5 +96,3 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
     console.log(`Server is listening on port: ${port}`);
 });
-
-// module.exports = router;
